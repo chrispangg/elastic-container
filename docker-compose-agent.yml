@@ -1,0 +1,30 @@
+# run: docker-compose -f docker-compose-agent.yml up -d --build elastic-agent
+version: '3.8'
+services:
+  elastic-agent:
+    image: docker.elastic.co/beats/elastic-agent-complete:${STACK_VERSION}
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          cpus: '2'
+          memory: 2G
+    platform: linux/amd64
+    container_name: elastic-agent
+    volumes:
+      - elastic-container_certs:/certs:z
+    environment:
+      - FLEET_ENROLL=1
+      # - FLEET_INSECURE=true
+      - FLEET_CA=/certs/ca/ca.crt
+      - FLEET_URL=https://192.168.0.104:8220
+      - FLEET_ENROLLMENT_TOKEN=MURPVE1JY0IxZmtCN0VrQ2JrR1U6SmZOZWtrWDBRc1drN3Q2TTZaUUdrdw==
+      - cap-add=NET_RAW
+      - cap-add=SETUID
+      - cap-add=NET_ADMIN
+
+volumes:
+  elastic-container_certs:
+    external: true
+  elastic-container_esdata01:
+    external: true
